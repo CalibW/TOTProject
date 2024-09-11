@@ -10,21 +10,23 @@ public class EnemyAttributes : MonoBehaviour
     public int defence;
     public int agility;
     public int magicPower;
+    public float minRandom;
+    public float maxRandom;
 
    public void TakeDamage(int amount)
    {
         health -= amount;
         health = Mathf.Max(0, health);
-        Vector3 randomness = new Vector3(Random.Range(0f, 0.25f), Random.Range(0f, 0.25f), Random.Range(0f, 0.25f));
+        Vector3 randomness = new Vector3(Random.Range(minRandom, maxRandom), Random.Range(minRandom, maxRandom), Random.Range(minRandom, maxRandom));
         DamagePopUpGenerator.current.CreatePopUp(transform.position + randomness, amount.ToString(), Color.yellow);
    }
 
    public void DealDamage(GameObject target)
    {
-        var atm = target.GetComponent<AttributesManager>();
-        if (atm != null)
+        var playeratm = target.GetComponent<PlayerAttributes>();
+        if (playeratm != null)
         {
-            atm.TakeDamage(attack);
+            playeratm.TakeDamage(attack);
         }
    }
 }
