@@ -60,6 +60,10 @@ public class EnemyController : MonoBehaviour
     Transform target;
     NavMeshAgent agent;
     Animator animator;
+    public GameObject player;
+    public float range;
+    public float attackdistance;
+    float cooldown;
 
     // Add reference to the enemy's attack value
     [SerializeField] private EnemyAttributes enemyAttributes;
@@ -74,11 +78,13 @@ public class EnemyController : MonoBehaviour
         if (enemyAttributes == null)
         {
             enemyAttributes = GetComponent<EnemyAttributes>();
+
         }
     }
 
     void Update()
     {
+        cooldown -= Time.deltaTime;
         animator.SetFloat("Speed", agent.velocity.magnitude);
         float distance = Vector3.Distance(target.position, transform.position);
         if (distance <= lookRadius)
@@ -89,6 +95,16 @@ public class EnemyController : MonoBehaviour
         if (distance <= agent.stoppingDistance)
         {
             FaceTarget();
+        }
+        if((transform.position - player.transform.position).magnitude <= attackdistance && cooldown <= 0)
+        {
+            PlayerAttributes playerAttributes = player.GetComponent<PlayerAttributes>();
+            if (playerAttributes != null)
+            {
+                // Reduce the player's health based on the enemy's attack
+                playerAttributes.TakeDamage(enemyAttributes.attack);
+            }
+            cooldown = 1f;
         }
     }
 
